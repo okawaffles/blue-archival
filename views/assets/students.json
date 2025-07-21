@@ -1,8 +1,10 @@
 {
     "__SOURCE":"https://bluearchive.fandom.com/wiki/Student/Detailed_List",
+    "__SOURCE2":"https://bluearchive.wiki/wiki/Characters",
 
     "shiroko": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"attacker",
         "pos":"middle",
@@ -15,6 +17,7 @@
     },
     "shiroko (riding)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"attacker",
         "pos":"middle",
@@ -27,6 +30,7 @@
     },
     "shiroko (swimsuit)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"special",
         "class":"attacker",
         "pos":"back",
@@ -39,6 +43,7 @@
     },
     "shiroko (terror)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"attacker",
         "pos":"middle",
@@ -51,6 +56,7 @@
     },
     "serika": {
         "rarity": 2,
+        "school":"abydos",
         "role":"striker",
         "class":"attacker",
         "pos":"middle",
@@ -63,6 +69,7 @@
     },
     "serika (new year)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"special",
         "class":"supporter",
         "pos":"back",
@@ -75,6 +82,7 @@
     },
     "serika (swimsuit)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"special",
         "class":"attacker",
         "pos":"back",
@@ -87,6 +95,7 @@
     },
     "hoshino": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"tank",
         "pos":"front",
@@ -99,6 +108,7 @@
     },
     "hoshino (swimsuit)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"supporter",
         "pos":"front",
@@ -111,6 +121,7 @@
     },
     "hoshino (armed)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"tank",
         "pos":"front",
@@ -123,6 +134,7 @@
     },
     "nonomi": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"attacker",
         "pos":"back",
@@ -135,6 +147,7 @@
     },
     "nonomi (swimsuit)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"striker",
         "class":"attacker",
         "pos":"back",
@@ -147,6 +160,7 @@
     },
     "ayane": {
         "rarity": 3,
+        "school":"abydos",
         "role":"special",
         "class":"healer",
         "pos":"back",
@@ -159,6 +173,7 @@
     },
     "ayane (swimsuit)": {
         "rarity": 3,
+        "school":"abydos",
         "role":"special",
         "class":"tactical",
         "pos":"back",
@@ -168,5 +183,188 @@
         "attack":"penetration",
         "defense":"light",
         "cover":false
+    },
+
+    "akane (bunny girl)": {
+        "rarity": 3,
+        "school":"millenium",
+        "role":"special",
+        "class":"attacker",
+        "pos":"back",
+        "city":"neutral",
+        "desert":"terrible",
+        "indoor":"excellent",
+        "attack":"mystic",
+        "defense":"heavy",
+        "cover":false
+    },
+    "akari (new year)": {
+        "rarity": 3,
+        "school":"gehenna",
+        "class":"tactical",
+        "pos":"back",
+        "attack":"mystic",
+        "defense":"special",
+        "role":"special",
+        "city":"neutral",
+        "desert":"excellent",
+        "indoor":"terrible",
+        "cover":false
+    },
+    "ako": {
+        "rarity": 3,
+        "school":"gehenna",
+        "class":"supporter",
+        "pos":"back",
+        "attack":"mystic",
+        "defense":"heavy",
+        "role":"special",
+        "city":"terrible",
+        "desert":"neutral",
+        "indoor":"excellent",
+        "cover":false
+    },
+    "ako (dress)": {
+        "rarity": 3,
+        "school":"gehenna",
+        "class":"supporter",
+        "pos":"middle",
+        "attack":"explosion",
+        "defense":"special",
+        "role":"striker",
+        "city":"terrible",
+        "desert":"excellent",
+        "indoor":"neutral",
+        "cover":true
+    },
+    "arisu": {
+        "rarity": 3,
+        "school":"millenium",
+        "class":"attacker",
+        "pos":"back",
+        "attack":"mystic",
+        "defense":"special",
+        "role":"striker",
+        "city":"neutral",
+        "desert":"terrible",
+        "indoor":"excellent",
+        "cover":false
+    },
+    "arisu (maid)": {
+        "rarity": 3,
+        "school":"millenium",
+        "class":"supporter",
+        "pos":"back",
+        "attack":"mystic",
+        "defense":"light",
+        "role":"striker",
+        "city":"excellent",
+        "desert":"neutral",
+        "indoor":"terrible",
+        "cover":false
+    },
+    "aru": {
+        "rarity": 3,
+        "school":"gehenna",
+        "class":"attacker",
+        "pos":"back",
+        "attack":"explosion",
+        "defense":"light",
+        "role":"striker",
+        "city":"excellent",
+        "desert":"neutral",
+        "indoor":"terrible",
+        "cover":true
+    },
+    "aru (dress)": {
+        "rarity": 3,
+        "school":"gehenna",
+        "class":"supporter",
+        "pos":"back",
+        "attack":"penetration",
+        "defense":"heavy",
+        "role":"striker",
+        "city":"terrible",
+        "desert":"neutral",
+        "indoor":"excellent",
+        "cover":true
+    },
+    "aru (new year)": {
+        "rarity": 3,
+        "school":"gehenna",
+        "class":"attacker",
+        "pos":"back",
+        "attack":"penetration",
+        "defense":"special",
+        "role":"striker",
+        "city":"terrible",
+        "desert":"neutral",
+        "indoor":"excellent",
+        "cover":true
+    },
+    "asuna (bunny girl)": {
+        "rarity": 3,
+        "school":"millenium",
+        "class":"supporter",
+        "pos":"middle",
+        "attack":"mystic",
+        "defense":"light",
+        "role":"striker",
+        "city":"terrible",
+        "desert":"neutral",
+        "indoor":"excellent",
+        "cover":true
+    },
+    "asuna (school uniform)": {
+        "rarity": 3,
+        "school":"millenium",
+        "class":"supporter",
+        "pos":"middle",
+        "attack":"explosion",
+        "defense":"heavy",
+        "role":"striker",
+        "city":"neutral",
+        "desert":"excellent",
+        "indoor":"terrible",
+        "cover":true
+    },
+    "atsuko": {
+        "rarity": 3,
+        "school":"arius",
+        "class":"tank",
+        "pos":"front",
+        "attack":"explosion",
+        "defense":"special",
+        "role":"striker",
+        "city":"neutral",
+        "desert":"terrible",
+        "indoor":"excellent",
+        "cover":true
+    },
+    "azusa": {
+        "rarity": 3,
+        "school":"trinity",
+        "class":"attacker",
+        "pos":"middle",
+        "attack":"explosion",
+        "defense":"heavy",
+        "role":"striker",
+        "city":"neutral",
+        "desert":"terrible",
+        "indoor":"excellent",
+        "cover":true
+    },
+    "azusa (swimsuit)": {
+        "rarity": 3,
+        "school":"trinity",
+        "class":"attacker",
+        "pos":"middle",
+        "attack":"mystic",
+        "defense":"light",
+        "role":"striker",
+        "city":"bad",
+        "desert":"bad",
+        "indoor":"excellent",
+        "cover":true
     }
 }
