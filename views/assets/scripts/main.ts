@@ -34,16 +34,25 @@ interface GameState {
 // -- globals --
 
 let GAME_STATE: GameState; 
+let DAY = 1;
 let ALL_STUDENTS: {[key: string]: Student} = {};
+const d = new Date();
+const CURRENT_DATE = `${d.getFullYear()}-${d.getMonth()<10?'0':''}${d.getMonth()+1}-${d.getDate()<10?'0':''}${d.getDate()}`;
 
 // -- various functions --
 
-function AddGuess(student: Student) {
+function AddGuess(student: Student, add_to_storage: boolean = true) {
     GAME_STATE.guesses.push(student);
+    if (localStorage.getItem('ba_last_played_date') != CURRENT_DATE) {
+        localStorage.setItem('ba_is_solved', 'false');
+        localStorage.setItem('ba_last_played_date', CURRENT_DATE);
+        localStorage.removeItem('ba_current_guesses');
+    }
+    if (add_to_storage) localStorage.setItem('ba_current_guesses', JSON.stringify(GAME_STATE.guesses.map(guess => guess.name)));
 
     let $newRow = $("<tr>");
 
-    console.log(student.name, GAME_STATE.solution_student.name);
+    // console.log(student.name, GAME_STATE.solution_student.name);
 
     const comfort_relation: Array<boolean> = [
         student.comfort.city == GAME_STATE.solution_student.comfort.city,
@@ -51,7 +60,9 @@ function AddGuess(student: Student) {
         student.comfort.indoor == GAME_STATE.solution_student.comfort.indoor,
     ];
 
-    const is_similar_student = (student.name.includes(GAME_STATE.solution_student.name)) || (GAME_STATE.solution_student.name.includes(student.name));
+
+    const testing_name = student.name.includes(' (')?student.name.split(' (')[0]:student.name;
+    const is_similar_student = (testing_name.includes(GAME_STATE.solution_student.name)) || (GAME_STATE.solution_student.name.includes(testing_name));
 
     console.log(comfort_relation);
 
@@ -112,16 +123,79 @@ function DoEntry() {
     if (student.name == GAME_STATE.solution_student.name) {
         $('#submit').prop('disabled', true);
         $('#entry').prop('disabled', true);
-        alert('congrats, you selected the right student! i don\'t have a win screen yet.');
+        $('#share').css('display', 'inline');
+        $('#final').text(`You got it! The student was ${GAME_STATE.solution_student.name}!`);
+        localStorage.setItem('ba_is_solved', 'true');
     }
+}
+
+function SpanClicked(content: string) {
+    $('#entry').val(content).removeClass('search-not-found').addClass('search-found');
+    DoEntry();
+}
+
+function GenerateShare() {
+    const lang = navigator.language.split('-')[0] || navigator.language;
+    const share_texts: {[key: string]: string} = {
+        'en/get':'I played BlueArchival #{num} and got it in {guess} guesses!\n',
+        'ja/get':'BlueArchival #{num}をプレイして{guess}回で当てた！\n',
+        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n'
+    };
+    let shared = share_texts[`${lang}/get`] || share_texts['en/get'];
+    let lines: Array<string> = [];
+    for (const student of GAME_STATE.guesses) {
+        let line = '';
+
+        const comfort_relation: Array<boolean> = [
+            student.comfort.city == GAME_STATE.solution_student.comfort.city,
+            student.comfort.desert == GAME_STATE.solution_student.comfort.desert,
+            student.comfort.indoor == GAME_STATE.solution_student.comfort.indoor,
+        ];
+
+        const is_similar_comfort = comfort_relation[0] || comfort_relation[1] || comfort_relation[2];
+
+        const testing_name = student.name.includes(' (')?student.name.split(' (')[0]:student.name;
+        const is_similar_student = (testing_name.includes(GAME_STATE.solution_student.name)) || (GAME_STATE.solution_student.name.includes(testing_name));
+
+        const corrects: Array<boolean> = [
+            student.name==GAME_STATE.solution_student.name,
+            student.school==GAME_STATE.solution_student.school,
+            student.rarity==GAME_STATE.solution_student.rarity,
+            student.class==GAME_STATE.solution_student.class,
+            student.pos==GAME_STATE.solution_student.pos,
+            student.attack==GAME_STATE.solution_student.attack,
+            student.defense==GAME_STATE.solution_student.defense,
+            student.role==GAME_STATE.solution_student.role,
+            comfort_relation[0] && comfort_relation[1] && comfort_relation[2],
+            student.cover==GAME_STATE.solution_student.cover,
+        ];
+
+        for (let i = 0; i != corrects.length; i++) {
+            if (i == 0 || i == 8) {
+                if (corrects[i]) line += '🟩';
+                else if ((i == 0 && is_similar_student) || (i == 8 && is_similar_comfort)) line += '🟧';
+                else line += '🟥';
+                continue;
+            }
+
+            line += corrects[i]?'🟩':'🟥';
+        }
+
+        lines.unshift(line);
+    }
+
+    shared += lines.join('\n');
+    shared += '\nhttps://millie.zone/blue-archival';
+    shared = shared.replace('{num}', DAY+'').replace('{guess}', GAME_STATE.guesses.length+'');
+
+    alert(shared);
 }
 
 // -- init --
 
 // wait til document is ready then start
 $(async function() {
-    // alert('doc ready');
-
+    // mobile check
     if (navigator.userAgent.includes('Android') || 
         navigator.userAgent.includes('iPhone') || 
         navigator.userAgent.includes('iPad') || 
@@ -129,7 +203,7 @@ $(async function() {
     {
         $('#body').remove();
         let $newBody = $('<body>');
-        $newBody.append(`<h2 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">This game currently cannot be played on mobile. Mobile support will be added later.</h2><br>`);
+        $newBody.append(`<h2 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">Sorry, this game can't be played on mobile. Mobile support will be soon, I promise!</h2><br>`);
         $newBody
             .css('display', 'flex')
             .css('justify-content', 'center')
@@ -145,18 +219,66 @@ $(async function() {
         console.log(`main -- loaded ${Object.keys(ALL_STUDENTS).length} students`);
     });
 
-    const sel = ALL_STUDENTS['shiroko (riding)'];
-    sel.name = 'shiroko (riding)';
-    sel.comfort = {
-        city: sel.city!,
-        desert: sel.desert!,
-        indoor: sel.indoor!,
-    };
+    await fetch(`solution/${CURRENT_DATE}`).then(async response => {
+        let data;
 
-    GAME_STATE = {
-        solution_student: sel,
-        guesses: []
-    };
+        try {
+            data = await response.json();
+        } catch (err) {
+            console.error('main -- error occurred while loading current student');
+            console.error(err);
+            $('#submit').prop('disabled', true);
+            $('#entry').prop('disabled', true);
+            alert('There was an error loading the daily solution. This is likely not your fault. Please report the issue ASAP at https://github.com/okawaffles/blue-archival/issues.')
+            return;
+        }
+
+        DAY = data.num;
+
+        const sel = ALL_STUDENTS[data.student];
+        sel.name = data.student;
+        sel.comfort = {
+            city: sel.city!,
+            desert: sel.desert!,
+            indoor: sel.indoor!,
+        };
+        
+        GAME_STATE = {
+            solution_student: sel,
+            guesses: []
+        };
+    });
+
+    // check if there is preexisting data in the localstorage
+    if (localStorage.getItem('ba_last_played_date') == CURRENT_DATE) {
+        console.log('main -- loading existing data...');
+        const ba_current_guesses = JSON.parse(localStorage.getItem('ba_current_guesses')!);
+
+        $('#waiting').remove();
+
+        for (const guess of ba_current_guesses) {
+            console.log(`main -- reload from localStorage: ${guess}`);
+            const sel = ALL_STUDENTS[guess];
+            sel.name = guess;
+            sel.comfort = {
+                city: sel.city!,
+                desert: sel.desert!,
+                indoor: sel.indoor!,
+            };
+
+            // false signifies that we don't want to add it to the localstorage
+            // since it's already there
+            AddGuess(sel, false);
+        }
+
+        if (localStorage.getItem('ba_is_solved') == 'true') {
+            $('#submit').prop('disabled', true);
+            $('#entry').prop('disabled', true);
+            $('#share').css('display', 'inline');
+            $('#final').text(`You got it! The student was ${GAME_STATE.solution_student.name}!`);
+            return;
+        }
+    }
 
     // add listener for search bar
     $('#entry').on('input', () => {
@@ -175,7 +297,7 @@ $(async function() {
         let results = 'did you mean...<br>';
         for (const key in ALL_STUDENTS) {
             if (key.includes(value)) {
-                results += key + ', '
+                results += `<span onclick="SpanClicked('${key}')">${key}</span>, `
             }
 
             if (value == key) {
@@ -196,4 +318,9 @@ $(async function() {
     $(document).on('keydown', (ev) => {
         if ($('#entry').is(':focus') && ev.key == 'Enter') DoEntry();
     });
+
+    // -- "anti-cheat" --
+    console.log("%c Hey! Cheating gets rid of the fun! ", "background: red; color: yellow; font-size: x-large");
+    console.log("%c You've got this! Keep trying! ", "color: green; font-size: large");
+    console.log("%c Encountered an issue? Report it (with screenshots of the logs) at https://github.com/okawaffles/blue-archival/issues ", "color: rgb(18,138,250); font-size: medium");
 });
