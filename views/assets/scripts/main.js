@@ -112,26 +112,40 @@ function DoEntry() {
 // wait til document is ready then start
 $(function () {
     return __awaiter(this, void 0, void 0, function () {
-        var sel;
+        var $newBody, sel;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: 
-                // alert('doc ready');
-                // fetch all students
-                return [4 /*yield*/, fetch('assets/students.json').then(function (response) { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, response.json()];
-                                case 1:
-                                    ALL_STUDENTS = _a.sent();
-                                    console.log("main -- loaded ".concat(Object.keys(ALL_STUDENTS).length, " students"));
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); })];
-                case 1:
+                case 0:
                     // alert('doc ready');
+                    if (navigator.userAgent.includes('Android') ||
+                        navigator.userAgent.includes('iPhone') ||
+                        navigator.userAgent.includes('iPad') ||
+                        navigator.userAgent.includes('iOS')) {
+                        $('#body').remove();
+                        $newBody = $('<body>');
+                        $newBody.append("<h2 style=\"color: red; width:100vw; padding:0; margin: 0;text-align: center;\">This game currently cannot be played on mobile. Mobile support will be added later.</h2><br>");
+                        $newBody
+                            .css('display', 'flex')
+                            .css('justify-content', 'center')
+                            .css('align-content', 'center')
+                            .css('height', '100vh');
+                        $('#root').append($newBody);
+                        return [2 /*return*/];
+                    }
+                    // fetch all students
+                    return [4 /*yield*/, fetch('assets/students.json').then(function (response) { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, response.json()];
+                                    case 1:
+                                        ALL_STUDENTS = _a.sent();
+                                        console.log("main -- loaded ".concat(Object.keys(ALL_STUDENTS).length, " students"));
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); })];
+                case 1:
                     // fetch all students
                     _a.sent();
                     sel = ALL_STUDENTS['shiroko (riding)'];

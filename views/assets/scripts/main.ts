@@ -122,6 +122,23 @@ function DoEntry() {
 $(async function() {
     // alert('doc ready');
 
+    if (navigator.userAgent.includes('Android') || 
+        navigator.userAgent.includes('iPhone') || 
+        navigator.userAgent.includes('iPad') || 
+        navigator.userAgent.includes('iOS')) 
+    {
+        $('#body').remove();
+        let $newBody = $('<body>');
+        $newBody.append(`<h2 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">This game currently cannot be played on mobile. Mobile support will be added later.</h2><br>`);
+        $newBody
+            .css('display', 'flex')
+            .css('justify-content', 'center')
+            .css('align-content', 'center')
+            .css('height', '100vh');
+        $('#root').append($newBody);
+        return;
+    }
+
     // fetch all students
     await fetch('assets/students.json').then(async response => {
         ALL_STUDENTS = await response.json();
@@ -178,5 +195,5 @@ $(async function() {
     });
     $(document).on('keydown', (ev) => {
         if ($('#entry').is(':focus') && ev.key == 'Enter') DoEntry();
-    })
+    });
 });
