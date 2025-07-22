@@ -5,33 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Archival</title>
     <link rel="stylesheet" href="assets/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="assets/scripts/main.js"></script>
 </head>
 <body>
     <div class="top">
         <img src="assets/logo.png" alt="Blue Archival" class="logo">
     </div>
 
-    <div class="list" id="students">
-        <div class="student">
-            <img src="assets/images/shiroko.webp" alt="Shiroko" class="correct">
-            <div class="rarity">3</div>
-            <div class="role">striker</div>
-            <div class="class">attacker</div>
-            <div class="position">middle</div>
-            <div class="terrain">
-                <div class="city">excellent</div>
-                <div class="desert">neutral</div>
-                <div class="indoor">terrible</div>
-            </div>
-            <div class="attack">explosion</div>
-            <div class="defense">light armor</div>
-        </div>
+    <div class="info">
+        <h3>You get unlimited tries to guess the Blue Archive student.<br>Green means the category is correct. Red means it is incorrect. Orange means partially correct.</h3>
+    </div>
 
-        <table class="student-tb">
-            <tr>
+    <div class="search">
+        <input type="text" class="entry" id="entry" placeholder="Search Students">
+        <button id="submit">Enter</button>
+    </div>
+    <div class="searchlist">
+        <p id="did-you-mean">start typing to get results...</p>
+    </div>
+
+    <div class="list">
+        <table class="student-tb" id="students">
+            <tr class="header" id="student-tb-header">
                 <th>Student</th>
-                
+                <th>School</th>
+                <th>Rarity</th>
+                <th>Class</th>
+                <th>Position</th>
+                <th>Attack</th>
+                <th>Defense</th>
+                <th>Role</th>
+                <th><img src="assets/images/city.webp" /> <img src="assets/images/desert.webp" /> <img src="assets/images/indoor.webp" /></th>
+                <th>Cover?</th>
             </tr>
+            <tr id="waiting"><td class="waiting">Waiting for first guess...</td></tr>
+            <!-- <tr class="student-entry">
+                <td>Shiroko</td>
+                <td>Abydos</td>
+                <td>3</td>
+                <td>Attacker</td>
+                <td>Middle</td>
+                <td>Explosive</td>
+                <td>Light</td>
+                <td>Striker</td>
+                <td>NTE</td>
+                <td>Yes</td>
+            </tr> -->
         </table>
     </div>
 </body>
