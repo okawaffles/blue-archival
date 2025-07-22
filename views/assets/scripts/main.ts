@@ -188,7 +188,20 @@ function GenerateShare() {
     shared += '\nhttps://millie.zone/blue-archival';
     shared = shared.replace('{num}', DAY+'').replace('{guess}', GAME_STATE.guesses.length+'');
 
-    alert(shared);
+    try {
+        navigator.share({
+            text: shared
+        });
+    } catch(err) {
+        console.warn(err);
+        navigator.clipboard.writeText(shared);
+        $('#share-button').text('Copied Results!');
+        setTimeout(() => {
+            $('#share-button').text('Share Results!');
+        }, 3000);
+    }
+
+    // alert(shared);
 }
 
 // -- init --
