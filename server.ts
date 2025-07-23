@@ -41,6 +41,7 @@ app.get('/solution/:date', (req, res) => {
         const names = Object.keys(all_students);
         student = names[Math.floor(Math.random() * names.length)];
         solutions[req.params.date] = student;
+        writeFileSync(join(__dirname, 'solutions.json'), JSON.stringify(solutions));
     } else student = solutions[req.params.date];
 
     res.json({student,num});
