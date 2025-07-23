@@ -20,7 +20,7 @@
         const date = document.getElementById('date').value;
         const student = document.getElementById('student').value;
 
-        fetch(`/admin/update?date=${date}&student=${student}`, {method:'POST'}).then(() => {
+        fetch(`admin/update?date=${date}&student=${student}`, {method:'POST'}).then(() => {
             alert('done');
         });
     }
