@@ -21,6 +21,24 @@ app.use('/assets', express.static(join(__dirname, 'views', 'assets')));
 app.get('/', (req, res) => {
     res.render('game');
 });
+app.get('/admin', (req, res) => {
+    if (req.headers.cookie && req.headers.cookie.includes('key=' + process.env.MASTER_KEY as string)) {
+        return res.render('admin');
+    }
+
+    res.send('<script>document.cookie = `key=`+prompt("Enter master key:"); location.reload();</script>');
+});
+app.post('/admin/update', (req, res) => {
+    if (!(req.headers.cookie && req.headers.cookie.includes('key=' + process.env.MASTER_KEY as string))) return res.status(401).end();
+
+    if (!req.query || !req.query.date || !req.query.student) return res.status(400).end();
+
+    const solutions: {[key: string]: string} = JSON.parse(readFileSync(join(__dirname, 'solutions.json'), 'utf-8'));
+    solutions[req.query.date as string] = req.query.student as string;
+    writeFileSync(join(__dirname, 'solutions.json'), JSON.stringify(solutions));
+
+    res.status(203).end();
+});
 app.get('/favicon.ico', (req, res) => {
     res.sendFile(join(__dirname, 'views', 'assets', 'images', 'favicon.png'));
 });

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BA Management</title>
+    <!-- <link rel="stylesheet" href="assets/style.css"> -->
+</head>
+<body>
+    <h1>Update Word on Date</h1>
+    <div class="fields">
+        <input type="date" id="date">
+        <input type="text" id="student" placeholder="Student">
+    </div>
+    <button id="submit">Update</button>
+</body>
+
+<script>
+    document.getElementById('submit').onclick = () => {
+        const date = document.getElementById('date').value;
+        const student = document.getElementById('student').value;
+
+        fetch(`/admin/update?date=${date}&student=${student}`, {method:'POST'}).then(() => {
+            alert('done');
+        });
+    }
+</script>
+
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        color: white;
+        font-family: monospace;
+        background-color: black;
+    }
+    .fields {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    .fields input {
+        background-color: #0f0f0f;
+        color: white;
+        border: 2px solid #808080;
+        width: 20rem;
+        text-align: center;
+        height: 2rem;
+        border-radius: .5rem;
+        margin: 1rem;
+        font-family: monospace;
+    }
+    button {
+        background-color: rgb(18,138,250);
+        border: 2px solid white;
+        margin: 0 1rem;
+        height: 2.5rem;
+        padding: 0 2rem;
+        color: white;
+        font-family: monospace;
+        font-size: large;
+        border-radius: .5rem;
+        cursor: pointer;
+    }
+</style>
+
+</html>

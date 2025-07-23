@@ -178,7 +178,8 @@ function GenerateShare() {
         const is_similar_comfort = comfort_relation[0] || comfort_relation[1] || comfort_relation[2];
 
         const testing_name = student.name.includes(' (')?student.name.split(' (')[0]:student.name;
-        const is_similar_student = (testing_name.includes(GAME_STATE.solution_student.name)) || (GAME_STATE.solution_student.name.includes(testing_name));
+        const testing_solution = GAME_STATE.solution_student.name.includes(' (')?GAME_STATE.solution_student.name.split(' (')[0]:GAME_STATE.solution_student.name;
+        const is_similar_student = (testing_name.includes(testing_solution)) || (testing_solution.includes(testing_name));
 
         const corrects: Array<boolean> = [
             student.name==GAME_STATE.solution_student.name,
@@ -226,6 +227,33 @@ function GenerateShare() {
     }
 
     // alert(shared);
+}
+
+function GenerateDiscordShare() {
+    const lang = navigator.language.split('-')[0] || navigator.language;
+    const share_texts: {[key: string]: string} = {
+        'en/get':'I played BlueArchival #{num} and got it in {guess} guesses!\n||',
+        'ja/get':'BlueArchival #{num}をプレイして{guess}回で当てた！\n||',
+        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n||'
+    };
+    let shared = share_texts[`${lang}/get`] || share_texts['en/get'];
+    shared = shared.replace('{num}', DAY+'').replace('{guess}', GAME_STATE.guesses.length+'');
+    for (const student of GAME_STATE.guesses) {
+        shared += student.name + ', ';
+    }
+    shared += '||\nhttps://millie.zone/blue-archival';
+
+    try {
+        if (MOBILE) navigator.share({text:shared});
+        else throw new Error('not mobile so fail out of this block');
+    } catch (err) {
+        console.warn(err);
+        navigator.clipboard.writeText(shared);
+        $('#share-button-discord').text('Copied Results!');
+        setTimeout(() => {
+            $('#share-button-discord').text('Copy Results (Discord)');
+        }, 3000);
+    }
 }
 
 // -- init --
@@ -316,7 +344,7 @@ $(async function() {
             $('#submit').prop('disabled', true);
             $('#entry').prop('disabled', true);
             $('#share').css('display', 'inline');
-            $('#final').text(`You got it! The student was ${GAME_STATE.solution_student.name}!`);
+            $('#final').html(`You got it! The student was <span class="student-name">${GAME_STATE.solution_student.name}</span>!`);
             return;
         }
     }
