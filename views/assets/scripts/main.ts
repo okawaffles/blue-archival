@@ -211,6 +211,7 @@ function GenerateShare() {
     shared = shared.replace('{num}', DAY+'').replace('{guess}', GAME_STATE.guesses.length+'');
 
     try {
+        if (!MOBILE) throw new Error('wahhh');
         navigator.share({
             text: shared
         });
