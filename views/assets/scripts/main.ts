@@ -83,7 +83,8 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
 
 
     const testing_name = student.name.includes(' (')?student.name.split(' (')[0]:student.name;
-    const is_similar_student = (testing_name.includes(GAME_STATE.solution_student.name)) || (GAME_STATE.solution_student.name.includes(testing_name));
+    const testing_solution = GAME_STATE.solution_student.name.includes(' (')?GAME_STATE.solution_student.name.split(' (')[0]:GAME_STATE.solution_student.name;
+    const is_similar_student = (testing_name.includes(testing_solution)) || (testing_solution.includes(testing_name));
 
     console.log(comfort_relation);
 
@@ -145,7 +146,7 @@ function DoEntry() {
         $('#submit').prop('disabled', true);
         $('#entry').prop('disabled', true);
         $('#share').css('display', 'inline');
-        $('#final').text(`You got it! The student was <h2 class="student-name">${GAME_STATE.solution_student.name}</h2>!`);
+        $('#final').html(`You got it! The student was <h2 class="student-name">${GAME_STATE.solution_student.name}</h2>!`);
         $('#did-you-mean').css('display', 'none');
         localStorage.setItem('ba_is_solved', 'true');
     }
