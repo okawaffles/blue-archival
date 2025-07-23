@@ -163,6 +163,9 @@ body {
     text-align: center;
     color: white;
 }
+.student-name {
+    font-family: monospace !important;
+}
 .share button:hover {
     background-color: rgba(18, 138, 250, 0.493);
 }

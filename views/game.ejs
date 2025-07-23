@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlueArchival</title>
     <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/mobile.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="assets/scripts/main.js"></script>
 </head>
@@ -15,6 +16,8 @@
 
     <!-- <h2 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">THIS GAME IS A DEMO. IT IS NOT FINISHED.</h2><br>
     <h3 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">There are currently only 28 implemented students. All students will be implemented in the future.</h3><br><br> -->
+
+    <h3 class="mobile">You are using a device with a small screen. This is not a first-priority experience. For the best experience, please use a device with a larger screen.<br><span style="color: rgb(18,138,250);">The C/D/I field stands for "City/Desert/Indoor" comfort levels.</span></h3>
 
     <div class="info">
         <h3>You get unlimited tries to guess the Blue Archive student.<br>Green means the category is correct. Red means it is incorrect. Orange means partially correct.</h3>
@@ -46,7 +49,7 @@
                 <th>Attack</th>
                 <th>Defense</th>
                 <th>Role</th>
-                <th><img src="assets/images/city.webp" /> <img src="assets/images/desert.webp" /> <img src="assets/images/indoor.webp" /></th>
+                <th id="th-comfort"><img src="assets/images/city.webp" /> <img src="assets/images/desert.webp" /> <img src="assets/images/indoor.webp" /></th>
                 <th>Cover?</th>
             </tr>
             <tr id="waiting"><td class="waiting">Waiting for first guess...</td></tr>

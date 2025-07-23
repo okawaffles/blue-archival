@@ -36,6 +36,27 @@ interface GameState {
 let GAME_STATE: GameState; 
 let DAY = 1;
 let ALL_STUDENTS: {[key: string]: Student} = {};
+let MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone');
+// table replaces long text with these to save on horizontal space
+let MOBILE_ALTS: {[key: string]: string} = {
+    'attacker': 'ATK',
+    'healer': 'HEAL',
+    'front': 'FRONT',
+    'middle': 'MID',
+    'back': 'BACK',
+    'penetration': 'PENET.',
+    'explosive': 'EXPL.',
+    'light': 'LT',
+    'heavy': 'HV',
+    'striker': 'STRK',
+    'special': 'SPEC',
+    'support': 'SUPP',
+    'mystic': 'MYST',
+    'elastic': 'ELAS',
+    'tactical': 'TACT',
+    'tank': 'TANK',
+    'sonic': 'SONIC',
+};
 const d = new Date();
 const CURRENT_DATE = `${d.getFullYear()}-${d.getMonth()<10?'0':''}${d.getMonth()+1}-${d.getDate()<10?'0':''}${d.getDate()}`;
 
@@ -91,11 +112,11 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
     $newRow.append(`<td class="${corrects[0]?'correct':`${is_similar_student?'partial-correct':''}`}"><img src="${'assets/images/'+student.name+'.webp'}" alt="${student.name}" /></td>`);
     $newRow.append(`<td class="${corrects[1]?'correct':''}"><img src="assets/images/${student.school}.webp" alt="${student.school}" /></td>`);
     $newRow.append(`<td class="${corrects[2]?'correct':''}">${stars}</td>`);
-    $newRow.append(`<td class="${corrects[3]?'correct':''}">${student.class}</td>`);
-    $newRow.append(`<td class="${corrects[4]?'correct':''}">${student.pos}</td>`);
-    $newRow.append(`<td class="${corrects[5]?'correct':''}">${student.attack}</td>`);
-    $newRow.append(`<td class="${corrects[6]?'correct':''}">${student.defense}</td>`);
-    $newRow.append(`<td class="${corrects[7]?'correct':''}">${student.role}</td>`);
+    $newRow.append(`<td class="${corrects[3]?'correct':''}">${MOBILE?MOBILE_ALTS[student.class]:student.class}</td>`);
+    $newRow.append(`<td class="${corrects[4]?'correct':''}">${MOBILE?MOBILE_ALTS[student.pos]:student.pos}</td>`);
+    $newRow.append(`<td class="${corrects[5]?'correct':''}">${MOBILE?MOBILE_ALTS[student.attack]:student.attack}</td>`);
+    $newRow.append(`<td class="${corrects[6]?'correct':''}">${MOBILE?MOBILE_ALTS[student.defense]:student.defense}</td>`);
+    $newRow.append(`<td class="${corrects[7]?'correct':''}">${MOBILE?MOBILE_ALTS[student.role]:student.role}</td>`);
     $newRow.append(`<td class="${corrects[8]?'correct':`${(comfort_relation[0] || comfort_relation[1] || comfort_relation[2])?'partial-correct':''}`}">${comfort}</td>`);
     $newRow.append(`<td class="${corrects[9]?'correct':''}">${student.cover?'Yes':'No'}</td>`);
 
@@ -124,7 +145,8 @@ function DoEntry() {
         $('#submit').prop('disabled', true);
         $('#entry').prop('disabled', true);
         $('#share').css('display', 'inline');
-        $('#final').text(`You got it! The student was ${GAME_STATE.solution_student.name}!`);
+        $('#final').text(`You got it! The student was <h2 class="student-name">${GAME_STATE.solution_student.name}</h2>!`);
+        $('#did-you-mean').css('display', 'none');
         localStorage.setItem('ba_is_solved', 'true');
     }
 }
@@ -209,21 +231,25 @@ function GenerateShare() {
 // wait til document is ready then start
 $(async function() {
     // mobile check
-    if (navigator.userAgent.includes('Android') || 
-        navigator.userAgent.includes('iPhone') || 
-        navigator.userAgent.includes('iPad') || 
-        navigator.userAgent.includes('iOS')) 
-    {
-        $('#body').remove();
-        let $newBody = $('<body>');
-        $newBody.append(`<h2 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">Sorry, this game can't be played on mobile. Mobile support will be soon, I promise!</h2><br>`);
-        $newBody
-            .css('display', 'flex')
-            .css('justify-content', 'center')
-            .css('align-content', 'center')
-            .css('height', '100vh');
-        $('#root').append($newBody);
-        return;
+    // if (navigator.userAgent.includes('Android') || 
+    //     navigator.userAgent.includes('iPhone') || 
+    //     navigator.userAgent.includes('iPad') || 
+    //     navigator.userAgent.includes('iOS')) 
+    // {
+    //     $('#body').remove();
+    //     let $newBody = $('<body>');
+    //     $newBody.append(`<h2 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">Sorry, this game can't be played on mobile. Mobile support will be soon, I promise!</h2><br>`);
+    //     $newBody
+    //         .css('display', 'flex')
+    //         .css('justify-content', 'center')
+    //         .css('align-content', 'center')
+    //         .css('height', '100vh');
+    //     $('#root').append($newBody);
+    //     return;
+    // }
+
+    if (MOBILE) {
+        $('#th-comfort').html('C/D/I');
     }
 
     // fetch all students
