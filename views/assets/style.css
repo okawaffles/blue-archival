@@ -99,6 +99,18 @@ body {
 .info {
     color: white;
     text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+}
+.info h3 {
+    width: 100%;
+    margin-bottom: 0;
+}
+.info h4 {
+    margin: 1rem;
+}
+.info h4 a {
+    color: rgb(18,138,250);
 }
 
 .search .entry {

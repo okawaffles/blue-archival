@@ -19,7 +19,10 @@
         font-size: x-small;
     }
     .info h3 {
-        margin: 0 0 1rem;
+        margin: 0;
+    }
+    .info h4 {
+        margin: .5rem;
     }
 
     .search {
