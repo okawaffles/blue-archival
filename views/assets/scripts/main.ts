@@ -20,7 +20,7 @@ interface Student {
     defense: string,
     cover: boolean,
 
-    // used for conversion from the json
+    // used for conversion from the json, do not use in game comparisons
     city?: 'excellent' | 'good' | 'neutral' | 'bad' | 'terrible',
     desert?: 'excellent' | 'good' | 'neutral' | 'bad' | 'terrible',
     indoor?: 'excellent' | 'good' | 'neutral' | 'bad' | 'terrible' 
@@ -86,8 +86,6 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
     const testing_solution = GAME_STATE.solution_student.name.includes(' (')?GAME_STATE.solution_student.name.split(' (')[0]:GAME_STATE.solution_student.name;
     const is_similar_student = (testing_name.includes(testing_solution)) || (testing_solution.includes(testing_name));
 
-    console.log(comfort_relation);
-
     const corrects: Array<boolean> = [
         student.name==GAME_STATE.solution_student.name,
         student.school==GAME_STATE.solution_student.school,
@@ -125,6 +123,13 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
 }
 
 function DoEntry() {
+    if ($('#entry').val() == 'hint') {
+        if (GAME_STATE.guesses.length == 0) return alert("You can't get a hint until you guess one student.");
+        const hint = GetHint(GAME_STATE.guesses[GAME_STATE.guesses.length - 1]!);
+        if (hint == '') return alert("Can't give you a hint, you're already too close!");
+        AddGuess(ALL_STUDENTS[hint]);
+        return;
+    }
     if ($('#entry').val() == '' || $('#entry').hasClass('search-not-found')) return console.log('main -- not found student name');
 
     $('#waiting').remove();
@@ -256,28 +261,63 @@ function GenerateDiscordShare() {
     }
 }
 
+function GetHint(userBest: Student): string {
+    const similarity = (a: Student, b: Student): number => {
+        if (!a.comfort) a.comfort = {
+            city: a.city!,
+            desert: a.desert!,
+            indoor: a.indoor!
+        };
+        if (!b.comfort) b.comfort = {
+            city: b.city!,
+            desert: b.desert!,
+            indoor: b.indoor!
+        };
+
+        let score = 0;
+        if (a.rarity === b.rarity) score++;
+        if (a.school === b.school) score++;
+        if (a.role === b.role) score++;
+        if (a.class === b.class) score++;
+        if (a.pos === b.pos) score++;
+        if (a.attack === b.attack) score++;
+        if (a.defense === b.defense) score++;
+        if (a.cover === b.cover) score++;
+        if (a.comfort.city === b.comfort.city) score++;
+        if (a.comfort.desert === b.comfort.desert) score++;
+        if (a.comfort.indoor === b.comfort.indoor) score++;
+        return score;
+    };
+
+    const scoreToAnswer = (s: Student) => similarity(s, GAME_STATE.solution_student);
+    const scoreToGuess = (s: Student) => similarity(s, userBest);
+
+    const userScore = scoreToAnswer(userBest);
+    const maxScore = similarity(GAME_STATE.solution_student, GAME_STATE.solution_student); // usually 11
+
+    const candidates = Object.values(ALL_STUDENTS)
+        .filter(s => s.name !== userBest.name && s.name !== GAME_STATE.solution_student.name)
+        .map(student => ({
+            student,
+            toAnswer: scoreToAnswer(student),
+            toGuess: scoreToGuess(student)
+        }))
+        .filter(entry => entry.toAnswer > userScore && entry.toAnswer < maxScore)
+        .sort((a, b) => a.toAnswer - b.toAnswer); // ascending toward solution
+
+    // Pick the middle one between guess and answer
+    if (candidates.length > 0) {
+        const middleIndex = Math.floor(candidates.length / 2);
+        return candidates[middleIndex].student.name;
+    }
+
+    return ""; // fallback if none found
+}
+
 // -- init --
 
 // wait til document is ready then start
 $(async function() {
-    // mobile check
-    // if (navigator.userAgent.includes('Android') || 
-    //     navigator.userAgent.includes('iPhone') || 
-    //     navigator.userAgent.includes('iPad') || 
-    //     navigator.userAgent.includes('iOS')) 
-    // {
-    //     $('#body').remove();
-    //     let $newBody = $('<body>');
-    //     $newBody.append(`<h2 style="color: red; width:100vw; padding:0; margin: 0;text-align: center;">Sorry, this game can't be played on mobile. Mobile support will be soon, I promise!</h2><br>`);
-    //     $newBody
-    //         .css('display', 'flex')
-    //         .css('justify-content', 'center')
-    //         .css('align-content', 'center')
-    //         .css('height', '100vh');
-    //     $('#root').append($newBody);
-    //     return;
-    // }
-
     if (MOBILE) {
         $('#th-comfort').html('C/D/I');
     }
@@ -285,6 +325,9 @@ $(async function() {
     // fetch all students
     await fetch('assets/students.json').then(async response => {
         ALL_STUDENTS = await response.json();
+        for (const student in ALL_STUDENTS) {
+            ALL_STUDENTS[student].name = student;
+        }
         console.log(`main -- loaded ${Object.keys(ALL_STUDENTS).length} students`);
     });
 
@@ -360,6 +403,12 @@ $(async function() {
             $('#entry').removeClass('search-not-found');
             return;
         }
+
+        if (value == 'hint') {
+            $('#did-you-mean').text('press enter to get a hint!');
+            return $('#entry').addClass('search-hint');
+        }
+        else $('#entry').removeClass('search-hint');
 
         if (!$('#entry').hasClass('search-not-found')) $('#entry').addClass('search-not-found');
 

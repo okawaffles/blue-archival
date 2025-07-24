@@ -111,6 +111,10 @@ body {
     border-radius: .5rem;
     font-size: large;
     transition: .1s background-color ease-in-out, .1s color ease-in-out;
+    font-family: monospace;
+}
+.search .entry:placeholder-shown {
+    font-size: medium;
 }
 .search .entry:disabled {
     cursor: not-allowed;
@@ -125,6 +129,10 @@ body {
 .search-not-found {
     color: #f00 !important;
     background-color: #492424 !important;
+}
+.search-hint {
+    color: rgb(18,138,250) !important;
+    background-color: rgba(18, 138, 250, 0.493) !important;
 }
 
 .searchlist {
@@ -167,14 +175,14 @@ body {
     font-family: monospace !important;
 }
 .share button:hover {
-    background-color: rgba(18, 138, 250, 0.493);
+    background-color: rgba(18, 138, 250, 0.493) !important;
 }
 .search button:nth-child(1) {
     cursor: default !important;
     opacity: 0;
 }
 .search button:hover {
-    background-color: #24492c;
+    background-color: rgba(18, 138, 250, 0.493) !important;
     cursor: pointer;
 }
 .search button:disabled {

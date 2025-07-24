@@ -29,6 +29,9 @@
     .search .entry {
         width: 60%;
     }
+    .search .entry:placeholder-shown {
+        font-size: small;
+    }
     .search button {
         font-size: small;
         width: 20%;
