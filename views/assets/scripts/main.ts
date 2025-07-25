@@ -28,7 +28,8 @@ interface Student {
 
 interface GameState {
     solution_student: Student,
-    guesses: Array<Student>
+    guesses: Array<Student>,
+    hints: number
 }
 
 // -- globals --
@@ -68,8 +69,10 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
         localStorage.setItem('ba_is_solved', 'false');
         localStorage.setItem('ba_last_played_date', CURRENT_DATE);
         localStorage.removeItem('ba_current_guesses');
+        localStorage.setItem('ba_guess_hints', '0');
     }
     if (add_to_storage) localStorage.setItem('ba_current_guesses', JSON.stringify(GAME_STATE.guesses.map(guess => guess.name)));
+    localStorage.setItem('ba_guess_hints', GAME_STATE.hints+'');
 
     let $newRow = $("<tr>");
 
@@ -127,6 +130,7 @@ function DoEntry() {
         if (GAME_STATE.guesses.length == 0) return alert("You can't get a hint until you guess one student.");
         const hint = GetHint(GAME_STATE.guesses[GAME_STATE.guesses.length - 1]!);
         if (hint == '') return alert("Can't give you a hint, you're already too close!");
+        GAME_STATE.hints++;
         AddGuess(ALL_STUDENTS[hint]);
         return;
     }
@@ -167,9 +171,11 @@ function GenerateShare() {
     const share_texts: {[key: string]: string} = {
         'en/get':'I played BlueArchival #{num} and got it in {guess} guesses!\n',
         'ja/get':'BlueArchival #{num}をプレイして{guess}回で当てた！\n',
-        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n'
+        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n',
+        'en/hints':'(but I used {hints} hints)\n',
     };
     let shared = share_texts[`${lang}/get`] || share_texts['en/get'];
+    if (GAME_STATE.hints > 0) shared += `${share_texts['en/hints'].replace('{hints}', GAME_STATE.hints+'')}`;
     let lines: Array<string> = [];
     for (const student of GAME_STATE.guesses) {
         let line = '';
@@ -237,12 +243,15 @@ function GenerateShare() {
 function GenerateDiscordShare() {
     const lang = navigator.language.split('-')[0] || navigator.language;
     const share_texts: {[key: string]: string} = {
-        'en/get':'I played BlueArchival #{num} and got it in {guess} guesses!\n||',
-        'ja/get':'BlueArchival #{num}をプレイして{guess}回で当てた！\n||',
-        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n||'
+        'en/get':'I played BlueArchival #{num} and got it in {guess} guesses!\n',
+        'ja/get':'BlueArchival #{num}をプレイして{guess}回で当てた！\n',
+        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n',
+        'en/hints':'(but I used {hints} hints)\n',
     };
     let shared = share_texts[`${lang}/get`] || share_texts['en/get'];
+    if (GAME_STATE.hints > 0) shared += share_texts['en/hints'].replace('{hints}', GAME_STATE.hints+'');
     shared = shared.replace('{num}', DAY+'').replace('{guess}', GAME_STATE.guesses.length+'');
+    shared += '||'
     for (const student of GAME_STATE.guesses) {
         shared += student.name + ', ';
     }
@@ -357,7 +366,8 @@ $(async function() {
         
         GAME_STATE = {
             solution_student: sel,
-            guesses: []
+            guesses: [],
+            hints: 0
         };
     });
 
@@ -365,6 +375,7 @@ $(async function() {
     if (localStorage.getItem('ba_last_played_date') == CURRENT_DATE) {
         console.log('main -- loading existing data...');
         const ba_current_guesses = JSON.parse(localStorage.getItem('ba_current_guesses')!);
+        GAME_STATE.hints = parseInt(localStorage.getItem('ba_guess_hints') || '0');
 
         $('#waiting').remove();
 
