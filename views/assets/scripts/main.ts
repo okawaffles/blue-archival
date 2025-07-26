@@ -87,7 +87,7 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
 
     const testing_name = student.name.includes(' (')?student.name.split(' (')[0]:student.name;
     const testing_solution = GAME_STATE.solution_student.name.includes(' (')?GAME_STATE.solution_student.name.split(' (')[0]:GAME_STATE.solution_student.name;
-    const is_similar_student = (testing_name.includes(testing_solution)) || (testing_solution.includes(testing_name));
+    const is_similar_student = testing_name == testing_solution;
 
     const corrects: Array<boolean> = [
         student.name==GAME_STATE.solution_student.name,
@@ -134,7 +134,7 @@ function DoEntry() {
         AddGuess(ALL_STUDENTS[hint]);
         return;
     }
-    if ($('#entry').val() == '' || $('#entry').hasClass('search-not-found')) return console.log('main -- not found student name');
+    if ($('#entry').val() == '' || $('#entry').hasClass('search-not-found')) return console.log('bluearchival/main -- not found student name');
 
     $('#waiting').remove();
 
@@ -331,13 +331,18 @@ $(async function() {
         $('#th-comfort').html('C/D/I');
     }
 
+    // -- "anti-cheat" --
+    console.log("%c Hey! Cheating gets rid of the fun! ", "background: red; color: yellow; font-size: x-large");
+    console.log("%c You've got this! Keep trying! ", "color: green; font-size: large");
+    console.log("%c Encountered an issue? Report it (with screenshots of the logs) at https://github.com/okawaffles/blue-archival/issues ", "color: rgb(18,138,250); font-size: medium");
+
     // fetch all students
     await fetch('assets/students.json').then(async response => {
         ALL_STUDENTS = await response.json();
         for (const student in ALL_STUDENTS) {
             ALL_STUDENTS[student].name = student;
         }
-        console.log(`main -- loaded ${Object.keys(ALL_STUDENTS).length} students`);
+        console.log(`bluearchival/main -- loaded ${Object.keys(ALL_STUDENTS).length} students`);
     });
 
     await fetch(`solution/${CURRENT_DATE}`).then(async response => {
@@ -346,41 +351,49 @@ $(async function() {
         try {
             data = await response.json();
         } catch (err) {
-            console.error('main -- error occurred while loading current student');
+            console.error(`bluearchival/main -- error occurred while loading current student: ${err}`);
+            console.error((err as any).stack);
             console.error(err);
             $('#submit').prop('disabled', true);
             $('#entry').prop('disabled', true);
-            alert('There was an error loading the daily solution. This is likely not your fault. Please report the issue ASAP at https://github.com/okawaffles/blue-archival/issues.')
+            alert('There was an error loading the daily solution. This is not your fault. Please open your browser console (ctrl+shift+I or F12) for more information.')
             return;
         }
 
         DAY = data.num;
 
-        const sel = ALL_STUDENTS[data.student];
-        sel.name = data.student;
-        sel.comfort = {
-            city: sel.city!,
-            desert: sel.desert!,
-            indoor: sel.indoor!,
-        };
-        
-        GAME_STATE = {
-            solution_student: sel,
-            guesses: [],
-            hints: 0
-        };
+        try {
+            const sel = ALL_STUDENTS[data.student];
+            sel.name = data.student;
+            sel.comfort = {
+                city: sel.city!,
+                desert: sel.desert!,
+                indoor: sel.indoor!,
+            };
+            
+            GAME_STATE = {
+                solution_student: sel,
+                guesses: [],
+                hints: 0
+            };
+        } catch (err: any) {
+            console.error(`bluearchival/main -- error while creating game state: ${err}`);
+            console.error(`bluearchival/main -- ${err.stack}`)
+            console.error(err);
+            return alert('There was an error loading the daily solution. This is not your fault. Please open your browser console (ctrl+shift+I or F12) for more information.');
+        }
     });
 
     // check if there is preexisting data in the localstorage
     if (localStorage.getItem('ba_last_played_date') == CURRENT_DATE) {
-        console.log('main -- loading existing data...');
+        console.log('bluearchival/main -- loading existing data...');
         const ba_current_guesses = JSON.parse(localStorage.getItem('ba_current_guesses')!);
         GAME_STATE.hints = parseInt(localStorage.getItem('ba_guess_hints') || '0');
 
         $('#waiting').remove();
 
         for (const guess of ba_current_guesses) {
-            console.log(`main -- reload from localStorage: ${guess}`);
+            console.log(`bluearchival/main -- reload from localStorage: ${guess}`);
             const sel = ALL_STUDENTS[guess];
             sel.name = guess;
             sel.comfort = {
@@ -447,9 +460,4 @@ $(async function() {
     $(document).on('keydown', (ev) => {
         if ($('#entry').is(':focus') && ev.key == 'Enter') DoEntry();
     });
-
-    // -- "anti-cheat" --
-    console.log("%c Hey! Cheating gets rid of the fun! ", "background: red; color: yellow; font-size: x-large");
-    console.log("%c You've got this! Keep trying! ", "color: green; font-size: large");
-    console.log("%c Encountered an issue? Report it (with screenshots of the logs) at https://github.com/okawaffles/blue-archival/issues ", "color: rgb(18,138,250); font-size: medium");
 });
