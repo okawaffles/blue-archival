@@ -29,7 +29,18 @@ interface Student {
 interface GameState {
     solution_student: Student,
     guesses: Array<Student>,
-    hints: number
+    hints: number,
+    knowns: {
+        rarity: boolean,
+        school: boolean,
+        role: boolean,
+        class: boolean,
+        pos: boolean,
+        comfort: boolean,
+        attack: boolean,
+        defense: boolean,
+        cover: boolean
+    }
 }
 
 // -- globals --
@@ -60,6 +71,7 @@ let MOBILE_ALTS: {[key: string]: string} = {
 };
 const d = new Date();
 const CURRENT_DATE = `${d.getFullYear()}-${d.getMonth()<10?'0':''}${d.getMonth()+1}-${d.getDate()<10?'0':''}${d.getDate()}`;
+let ENABLE_SUBTLE_HELP = false;
 
 // -- various functions --
 
@@ -70,6 +82,7 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
         localStorage.setItem('ba_last_played_date', CURRENT_DATE);
         localStorage.removeItem('ba_current_guesses');
         localStorage.setItem('ba_guess_hints', '0');
+        localStorage.setItem('ba_used_assist', 'no');
     }
     if (add_to_storage) localStorage.setItem('ba_current_guesses', JSON.stringify(GAME_STATE.guesses.map(guess => guess.name)));
     localStorage.setItem('ba_guess_hints', GAME_STATE.hints+'');
@@ -101,6 +114,16 @@ function AddGuess(student: Student, add_to_storage: boolean = true) {
         comfort_relation[0] && comfort_relation[1] && comfort_relation[2],
         student.cover==GAME_STATE.solution_student.cover,
     ];
+
+    if (corrects[1]) GAME_STATE.knowns.school = true;
+    if (corrects[2]) GAME_STATE.knowns.rarity = true;
+    if (corrects[3]) GAME_STATE.knowns.class = true;
+    if (corrects[4]) GAME_STATE.knowns.pos = true;
+    if (corrects[5]) GAME_STATE.knowns.attack = true;
+    if (corrects[6]) GAME_STATE.knowns.defense = true;
+    if (corrects[7]) GAME_STATE.knowns.role = true;
+    if (corrects[8]) GAME_STATE.knowns.comfort = true;
+    if (corrects[9]) GAME_STATE.knowns.cover = true;
 
     let stars = '';
     for (let i = 0; i < student.rarity; i++)
@@ -155,7 +178,7 @@ function DoEntry() {
         $('#submit').prop('disabled', true);
         $('#entry').prop('disabled', true);
         $('#share').css('display', 'inline');
-        $('#final').html(`You got it! The student was <h2 class="student-name">${GAME_STATE.solution_student.name}</h2>!`);
+        $('#final').html(`You got it! The student was <span class="student-name">${GAME_STATE.solution_student.name}</span>!`);
         $('#did-you-mean').css('display', 'none');
         localStorage.setItem('ba_is_solved', 'true');
     }
@@ -167,15 +190,9 @@ function SpanClicked(content: string) {
 }
 
 function GenerateShare() {
-    const lang = navigator.language.split('-')[0] || navigator.language;
-    const share_texts: {[key: string]: string} = {
-        'en/get':'I played BlueArchival #{num} and got it in {guess} guesses!\n',
-        'ja/get':'BlueArchival #{num}をプレイして{guess}回で当てた！\n',
-        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n',
-        'en/hints':'(but I used {hints} hints)\n',
-    };
-    let shared = share_texts[`${lang}/get`] || share_texts['en/get'];
-    if (GAME_STATE.hints > 0) shared += `${share_texts['en/hints'].replace('{hints}', GAME_STATE.hints+'')}`;
+    let shared = `I played BlueArchival #${DAY} and got it in ${GAME_STATE.guesses.length} guesses!\n`;
+    if (localStorage.getItem('ba_used_assist') == 'yes') shared = `I played BlueArchival #${DAY} and got it in ${GAME_STATE.guesses.length} guesses! (assist mode was used, ${GAME_STATE.hints} hints)\n`;
+    else if (GAME_STATE.hints > 0) shared = `I played BlueArchival #${DAY} and got it in ${GAME_STATE.guesses.length} guesses and ${GAME_STATE.hints} hints!\n`;
     let lines: Array<string> = [];
     for (const student of GAME_STATE.guesses) {
         let line = '';
@@ -221,7 +238,6 @@ function GenerateShare() {
 
     shared += lines.join('\n');
     shared += '\nhttps://millie.zone/blue-archival';
-    shared = shared.replace('{num}', DAY+'').replace('{guess}', GAME_STATE.guesses.length+'');
 
     try {
         if (!MOBILE) throw new Error('wahhh');
@@ -241,16 +257,9 @@ function GenerateShare() {
 }
 
 function GenerateDiscordShare() {
-    const lang = navigator.language.split('-')[0] || navigator.language;
-    const share_texts: {[key: string]: string} = {
-        'en/get':'I played BlueArchival #{num} and got it in {guess} guesses!\n',
-        'ja/get':'BlueArchival #{num}をプレイして{guess}回で当てた！\n',
-        'es/get':'¡He jugado a BlueArchival #{num} y lo he conseguido en {guess} intentos!\n',
-        'en/hints':'(but I used {hints} hints)\n',
-    };
-    let shared = share_texts[`${lang}/get`] || share_texts['en/get'];
-    if (GAME_STATE.hints > 0) shared += share_texts['en/hints'].replace('{hints}', GAME_STATE.hints+'');
-    shared = shared.replace('{num}', DAY+'').replace('{guess}', GAME_STATE.guesses.length+'');
+    let shared = `I played BlueArchival #${DAY} and got it in ${GAME_STATE.guesses.length} guesses!\n`;
+    if (localStorage.getItem('ba_used_assist') == 'yes') shared = `I played BlueArchival #${DAY} and got it in ${GAME_STATE.guesses.length} guesses! (assist mode was used, ${GAME_STATE.hints} hints)\n`;
+    else if (GAME_STATE.hints > 0) shared = `I played BlueArchival #${DAY} and got it in ${GAME_STATE.guesses.length} guesses and ${GAME_STATE.hints} hints!\n`;
     shared += '||'
     for (const student of GAME_STATE.guesses) {
         shared += student.name + ', ';
@@ -323,6 +332,26 @@ function GetHint(userBest: Student): string {
     return ""; // fallback if none found
 }
 
+function CheckStudentWorks(student: string): boolean {
+    localStorage.setItem('ba_used_assist', 'yes');
+
+    const student_entry = ALL_STUDENTS[student];
+
+    let is_compatible = GAME_STATE.guesses.length > 0;
+
+    if (GAME_STATE.knowns.school) is_compatible = student_entry.school == GAME_STATE.solution_student.school && is_compatible;
+    if (GAME_STATE.knowns.attack) is_compatible = student_entry.attack == GAME_STATE.solution_student.attack && is_compatible;
+    if (GAME_STATE.knowns.class) is_compatible = student_entry.class == GAME_STATE.solution_student.class && is_compatible;
+    if (GAME_STATE.knowns.comfort) is_compatible = student_entry.comfort == GAME_STATE.solution_student.comfort && is_compatible;
+    if (GAME_STATE.knowns.cover) is_compatible = student_entry.cover == GAME_STATE.solution_student.cover && is_compatible;
+    if (GAME_STATE.knowns.defense) is_compatible = student_entry.defense == GAME_STATE.solution_student.defense && is_compatible;
+    if (GAME_STATE.knowns.pos) is_compatible = student_entry.pos == GAME_STATE.solution_student.pos && is_compatible;
+    if (GAME_STATE.knowns.rarity) is_compatible = student_entry.rarity == GAME_STATE.solution_student.rarity && is_compatible;
+    if (GAME_STATE.knowns.role) is_compatible = student_entry.role == GAME_STATE.solution_student.role && is_compatible;
+
+    return is_compatible;
+}
+
 // -- init --
 
 // wait til document is ready then start
@@ -341,6 +370,11 @@ $(async function() {
         ALL_STUDENTS = await response.json();
         for (const student in ALL_STUDENTS) {
             ALL_STUDENTS[student].name = student;
+            ALL_STUDENTS[student].comfort = {
+                city: ALL_STUDENTS[student].city!,
+                desert: ALL_STUDENTS[student].desert!,
+                indoor: ALL_STUDENTS[student].indoor!
+            };
         }
         console.log(`bluearchival/main -- loaded ${Object.keys(ALL_STUDENTS).length} students`);
     });
@@ -374,7 +408,18 @@ $(async function() {
             GAME_STATE = {
                 solution_student: sel,
                 guesses: [],
-                hints: 0
+                hints: 0,
+                knowns: {
+                    attack: false,
+                    class: false,
+                    comfort: false,
+                    cover: false,
+                    defense: false,
+                    pos: false,
+                    rarity: false,
+                    role: false,
+                    school: false
+                }
             };
         } catch (err: any) {
             console.error(`bluearchival/main -- error while creating game state: ${err}`);
@@ -389,6 +434,9 @@ $(async function() {
         console.log('bluearchival/main -- loading existing data...');
         const ba_current_guesses = JSON.parse(localStorage.getItem('ba_current_guesses')!);
         GAME_STATE.hints = parseInt(localStorage.getItem('ba_guess_hints') || '0');
+
+        ENABLE_SUBTLE_HELP = localStorage.getItem('ba_used_assist')=='yes';
+        if (ENABLE_SUBTLE_HELP) $('#help').addClass('enable').text('Yes');
 
         $('#waiting').remove();
 
@@ -439,7 +487,9 @@ $(async function() {
         let results = 'did you mean...<br>';
         for (const key in ALL_STUDENTS) {
             if (key.includes(value)) {
-                results += `<span onclick="SpanClicked('${key}')">${key}</span>, `
+                let c = '';
+                if (ENABLE_SUBTLE_HELP) c = CheckStudentWorks(key)?'search-works':'';
+                results += `<span class="${c}" onclick="SpanClicked('${key}')">${key}</span>, `
             }
 
             if (value == key) {
@@ -459,5 +509,17 @@ $(async function() {
     });
     $(document).on('keydown', (ev) => {
         if ($('#entry').is(':focus') && ev.key == 'Enter') DoEntry();
+    });
+
+    // assist mode
+    $('#help').on('click', () => {
+        $('#did-you-mean').html('(type again to update...)');
+        if (ENABLE_SUBTLE_HELP) {
+            ENABLE_SUBTLE_HELP = false;
+            $('#help').removeClass('enable').text('Off');
+        } else {
+            ENABLE_SUBTLE_HELP = true;
+            $('#help').addClass('enable').text('Yes');
+        }
     });
 });

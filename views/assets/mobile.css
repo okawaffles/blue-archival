@@ -24,6 +24,9 @@
     .info h4 {
         margin: .5rem;
     }
+    .info p, .info p a, .info p button {
+        font-size: small;
+    }
 
     .search {
         margin-top: 0;

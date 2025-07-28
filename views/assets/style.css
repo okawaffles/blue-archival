@@ -107,10 +107,32 @@ body {
     margin-bottom: 0;
 }
 .info h4 {
+    width: 100%;
     margin: 1rem;
 }
 .info h4 a {
     color: rgb(18,138,250);
+}
+.info p {
+    margin-top: .2rem;
+    font-size: large;
+}
+.info p button {
+    color: white;
+    margin: 0 .5rem;
+    background-color: #2f2f2f;
+    border: 1px solid white;
+    font-family: monospace;
+    border-radius: 4px;
+}
+.info p a {
+    color: rgb(18,138,250);
+    text-decoration: underline;
+    font-style: italic;
+    font-size: small;
+}
+.info p .enable {
+    background-color: #2a2;
 }
 
 .search .entry {
@@ -202,4 +224,27 @@ body {
     border: 2px solid grey !important;
     color: grey !important;
     cursor: not-allowed;
+}
+
+@keyframes searchworks {
+    0% {
+        color: white;
+    }
+    50% {
+        color: #0f0;
+    }
+    100% {
+        color: white;
+    }
+}
+
+.search-works {
+    animation: 1s searchworks infinite;
+}
+
+.table-toggled-on {
+    display: table;
+}
+.table-toggled-off {
+    display: none;
 }
