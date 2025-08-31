@@ -4,12 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlueArchival</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css?ver=yuuka">
     <link rel="stylesheet" href="assets/mobile.css?ver=yuuka">
+    <link rel="stylesheet" href="assets/stylebar.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="assets/scripts/main.js?ver=yuuka"></script>
 </head>
 <body id="body">
+    <nav>
+        <div class="left">
+            <img src="assets/millie.zone.png" alt="millie.zone logo" onclick="document.location = 'https://millie.zone'">
+            <!-- <div class="splitter"></div> -->
+            <!-- <div class="h2p" onclick="document.location = 'howtoplay'">How to Play</div> -->
+        </div>
+        <div class="right">
+            <div class="admin" onclick="document.location = 'admin'">Admin</div>
+        </div>
+    </nav>
+
     <div class="top">
         <img src="assets/logo.png" alt="BlueArchival" class="logo">
     </div>
@@ -21,7 +36,7 @@
 
     <div class="info">
         <h3>You get unlimited tries to guess the Blue Archive student.<br>Green means the category is correct. Red means it is incorrect. Orange means partially correct.</h3>
-        <h4>See a full list of students <a href="https://bluearchive.wiki/wiki/Characters">here</a>. I do not consider this cheating, as there are 200+ students.</h4>
+        <h4>See a full list of students <a href="https://bluearchive.wiki/wiki/Characters">here</a>. Use it lightly, like sorting students by school. If you want to sort everything, just turn on assist mode.</h4>
         <p>Enable assist mode?<button id="help">Off</button><a href="javascript:alert('this feature highlights characters that are compatible with what have figured out with your previous guess. example: if you guessed midori and her only shared feature with the student was that she is a 3-star, any other 3 star students will show as green in the search results.')">(what is this?)</a></p>
     </div>
 
