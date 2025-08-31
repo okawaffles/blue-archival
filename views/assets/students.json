@@ -130,7 +130,7 @@
         "cover":false
     },
     "nonomi": {
-        "rarity": 3,
+        "rarity": 2,
         "school":"abydos",
         "role":"striker",
         "class":"attacker",
@@ -156,7 +156,7 @@
         "cover":false
     },
     "ayane": {
-        "rarity": 3,
+        "rarity": 2,
         "school":"abydos",
         "role":"special",
         "class":"healer",
