@@ -341,9 +341,9 @@ function CheckStudentWorks(student: string): boolean {
 
     if (GAME_STATE.knowns.school) is_compatible = student_entry.school == GAME_STATE.solution_student.school && is_compatible;
     if (GAME_STATE.knowns.attack) is_compatible = student_entry.attack == GAME_STATE.solution_student.attack && is_compatible;
-    if (GAME_STATE.knowns.class) is_compatible = student_entry.class == GAME_STATE.solution_student.class && is_compatible;
-    if (GAME_STATE.knowns.comfort) is_compatible = student_entry.comfort == GAME_STATE.solution_student.comfort && is_compatible;
-    if (GAME_STATE.knowns.cover) is_compatible = student_entry.cover == GAME_STATE.solution_student.cover && is_compatible;
+    // if (GAME_STATE.knowns.class) is_compatible = student_entry.class == GAME_STATE.solution_student.class && is_compatible;
+    // if (GAME_STATE.knowns.comfort) is_compatible = student_entry.comfort == GAME_STATE.solution_student.comfort && is_compatible;
+    // if (GAME_STATE.knowns.cover) is_compatible = student_entry.cover == GAME_STATE.solution_student.cover && is_compatible;
     if (GAME_STATE.knowns.defense) is_compatible = student_entry.defense == GAME_STATE.solution_student.defense && is_compatible;
     if (GAME_STATE.knowns.pos) is_compatible = student_entry.pos == GAME_STATE.solution_student.pos && is_compatible;
     if (GAME_STATE.knowns.rarity) is_compatible = student_entry.rarity == GAME_STATE.solution_student.rarity && is_compatible;
